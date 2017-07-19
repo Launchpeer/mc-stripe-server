@@ -12,5 +12,9 @@
     "control"
   ],
   "author": "Tim Dillman <tim@launchpeer.com>",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "randomstring": "^1.1.5",
+    "stripe": "^4.23.1"
+  }
 }
