@@ -1,5 +1,7 @@
 const Stripe = require('stripe');
 const random = require('randomstring');
+// TODO: This should be a configurable input for functions where this default is used
+const kBASE_LOCATION_PLAN_ID = 'base_location_plan';
 class StripeInterface {
   constructor(stripeAPIKey) {
     this.api = require('stripe')(stripeAPIKey);
