@@ -1,7 +1,9 @@
 const Stripe = require('stripe');
 const random = require('randomstring');
-// TODO: This should be a configurable input for functions where this default is used
-const kBASE_LOCATION_PLAN_ID = 'base_location_plan';
+
+/**
+ * This library only supports USD at the moment.
+ */
 class StripeInterface {
   constructor(stripeAPIKey) {
     this.api = require('stripe')(stripeAPIKey);
@@ -46,7 +48,7 @@ class StripeInterface {
     });
   }
 
-  createSubscription(customerId, quantity) {
+  createSubscription(customerId, planId, quantity) {
     return new Promise((resolve, reject) => {
       if(quantity <= 0){
         let err = new Error('quanitity must be greater than 0');
@@ -54,7 +56,7 @@ class StripeInterface {
       }
       this.api.subscriptions.create({
         customer: customerId,
-        plan: kBASE_LOCATION_PLAN_ID,
+        plan: planId,
         quantity: quantity
       }, (err, subscription) => {
         if(err) return reject(err);
@@ -171,7 +173,7 @@ class StripeInterface {
 
   // Create new Plan objects
   /**
-   * Creates a custom plan that will be billed at the interval scale and interval frequency. 
+   * Creates a custom plan that will be billed at the interval scale and interval frequency. Default currency is USD.  
    * @param {String} name human readable name for plan.
    * @param {Number} amount amount in cents
    * @param {String} interval payment charge interval either year, month, day or week
@@ -210,9 +212,13 @@ class StripeInterface {
     });
   }
 
-  listPlans() {
+  listPlans(startingAfterPlanId=undefined) {
     return new Promise((resolve, reject) => {
-      this.api.plans.list({limit: 100}, (err, plans) => {
+      var query = {limit: 100}
+      if(startingAfterPlanId) {
+        query.starting_after = startingAfterPlanId;
+      }
+      this.api.plans.list(query, (err, plans) => {
         if(err) return reject(err);
         return resolve(plans);
       });
@@ -228,9 +234,17 @@ class StripeInterface {
     });
   }
 
-  updatePlan() {
+  /**
+   * 
+   * @param {String} id 
+   * @param {{metadata:Object, name:String, statement_descriptor:String}} options 
+   */
+  updatePlan(id, options) {
     return new Promise((resolve, reject) => {
-      return reject('not implemented');
+      this.api.plans.update(id, options, (err, plan) => {
+        if(err) return reject(err);
+        return resolve(plan);
+      });
     });
   }
 }
