@@ -12,7 +12,7 @@ class StripeInterface {
   createCustomer(userId, token) {
     return new Promise((resolve, reject) => {
       this.api.customers.create({
-        description: `Wystle Customer ${userId}`,
+        description: `Customer ${userId}`,
         source: token
       }, function(err, customer) {
         if(err) return reject(err);
@@ -146,6 +146,17 @@ class StripeInterface {
   updateCustomerCard(customerId, cardId, cardObj) {
     return new Promise((resolve, reject) => {
       this.api.customers.updateCard(customerId, cardId, cardObj, (err, card) => {
+        if(err) return reject(err);
+        return resolve(card);
+      });
+    });
+  }
+
+  createCustomerCard(customerId, token) {
+    return new Promise((resolve, reject) => {
+      this.api.customers.createSource(customerId, {
+        source: token
+      }, (err, card) => {
         if(err) return reject(err);
         return resolve(card);
       });
