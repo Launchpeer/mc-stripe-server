@@ -9,6 +9,15 @@ class StripeInterface {
     this.api = require('stripe')(stripeAPIKey);
   }
 
+  findStripeConnect(connectId) {
+    return new Promise((resolve, reject) => {
+      this.api.accounts.retrieve(connectId, (err, account) => {
+        if (err) { return reject(err); }
+        return resolve(account);
+      });
+    });
+  }
+
   createCustomer(userId, token) {
     return new Promise((resolve, reject) => {
       this.api.customers.create({
