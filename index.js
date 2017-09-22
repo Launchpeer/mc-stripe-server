@@ -232,7 +232,7 @@ class StripeInterface {
     });
   }
 
-  listPlans(startingAfterPlanId=undefined) {
+  listPlans(startingAfterPlanId = undefined) {
     return new Promise((resolve, reject) => {
       var query = {limit: 100}
       if(startingAfterPlanId) {
