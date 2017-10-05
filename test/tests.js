@@ -21,7 +21,20 @@ describe('Stripe Interface Tests', () => {
       done();
     });
   });
-
+  it('should fail to update a customers payment information, customer does not exist', (done) => {
+    var req = new Object();
+    createStripeToken()
+    .then(token => {
+      return StripeInterface.updateCustomer('123', token.id);
+    })
+    .then(customer => {
+      expect.fail(customer, null, 'Unknown customer was updated, expected invalid customer to throw err');
+    })
+    .catch(err => {
+      expect(err.message).to.equal("No such customer: 123");
+      done();
+    });
+  });
   it('should update a customers payment information', (done) => {
     var req = new Object();
     createStripeCustomer()
@@ -38,6 +51,7 @@ describe('Stripe Interface Tests', () => {
       expect(customer.sources.data.length).to.equal(1);
       let curCard = customer.sources.data[0];
       expect(curCard.id).to.not.equal(req.prevCard.id);
+      expect(customer.default_source).to.equal(curCard.id);
       done();
     })
     .catch(err => {
