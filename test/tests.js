@@ -8,7 +8,6 @@ const stripeI = require('../index');
 const StripeInterface = new stripeI(stripeKey);
 describe('Stripe Interface Tests', () => {
   it('should create a stripe customer', (done) => {
-    
     createStripeToken()
     .then(token => {
       return StripeInterface.createCustomer('123abc', token.id);
@@ -22,6 +21,31 @@ describe('Stripe Interface Tests', () => {
       done();
     });
   });
+
+  it('should update a customers payment information', (done) => {
+    var req = new Object();
+    createStripeCustomer()
+    .then(customer => {
+      req.customer = customer;
+      req.prevCard = customer.sources.data[0];
+      return createStripeToken();
+    })
+    .then(token => {
+      req.token = token;
+      return StripeInterface.updateCustomer(req.customer.id, token.id);
+    })
+    .then(customer => {
+      expect(customer.sources.data.length).to.equal(1);
+      let curCard = customer.sources.data[0];
+      expect(curCard.id).to.not.equal(req.prevCard.id);
+      done();
+    })
+    .catch(err => {
+      console.log(err);
+      expect.fail(err, null, 'expected stripe to update the customer information', null);
+      done();
+    })
+  }).timeout(5000);
 
   it('it should list all available plans on stripe', (done) => {
     StripeInterface.createPlan(`Test Plan ${random.generate(5)}`, 5000, 'month', 1)

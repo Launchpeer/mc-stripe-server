@@ -76,7 +76,12 @@ class StripeInterface {
 
   updateCustomer(customerId, token) {
     return new Promise((resolve, reject) => {
-      return reject('Not implemented');
+      this.api.customers.update(customerId, {
+        source: token
+      }, (err, customer) => {
+        if (err) return reject(err);
+        return resolve(customer);
+      });
     });
   }
 
