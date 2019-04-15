@@ -57,7 +57,7 @@ class StripeInterface {
     });
   }
 
-  createSubscription(customerId, planId, quantity) {
+  createSubscription(customerId, planId, quantity, coupon) {
     return new Promise((resolve, reject) => {
       if(quantity <= 0){
         let err = new Error('quanitity must be greater than 0');
@@ -66,7 +66,8 @@ class StripeInterface {
       this.api.subscriptions.create({
         customer: customerId,
         plan: planId,
-        quantity: quantity
+        quantity: quantity,
+        coupon: coupon
       }, (err, subscription) => {
         if(err) return reject(err);
         return resolve(subscription);
@@ -109,8 +110,8 @@ class StripeInterface {
     });
   }
   /**
-   * Gets the subscriptions statuses. Returns an array of objects with subscription id as key and its status. 
-   * @param {String} subscriptionId 
+   * Gets the subscriptions statuses. Returns an array of objects with subscription id as key and its status.
+   * @param {String} subscriptionId
    */
   subscriptionStatus(subscriptionId) {
     return new Promise((resolve, reject) => {
@@ -128,7 +129,7 @@ class StripeInterface {
   // Customer Card Functionality
   /**
    * Retrive all customer cards limit 100
-   * @param {String} customerId Stripe customer ID 
+   * @param {String} customerId Stripe customer ID
    */
   getCustomerCards(customerId) {
     return new Promise((resolve, reject) => {
@@ -152,10 +153,10 @@ class StripeInterface {
     });
   }
   /**
-   * Updates a specific customer card.  All cardObj values are optional. 
-   * @param {String} customerId 
-   * @param {String} cardId 
-   * @param {{address_city:string, address_country:string, address_line1:string, address_line2:string, address_state:string, address_zip:string, exp_month:number, exp_year:number, name:string}} cardObj 
+   * Updates a specific customer card.  All cardObj values are optional.
+   * @param {String} customerId
+   * @param {String} cardId
+   * @param {{address_city:string, address_country:string, address_line1:string, address_line2:string, address_state:string, address_zip:string, exp_month:number, exp_year:number, name:string}} cardObj
    */
   updateCustomerCard(customerId, cardId, cardObj) {
     return new Promise((resolve, reject) => {
@@ -198,11 +199,11 @@ class StripeInterface {
 
   // Create new Plan objects
   /**
-   * Creates a custom plan that will be billed at the interval scale and interval frequency. Default currency is USD.  
+   * Creates a custom plan that will be billed at the interval scale and interval frequency. Default currency is USD.
    * @param {String} name human readable name for plan.
    * @param {Number} amount amount in cents
    * @param {String} interval payment charge interval either year, month, day or week
-   * @param {Number} intervalCount frequency the charge will be made based on the interval.  Example: interval = month interval count = 3 bills every 3 months. 
+   * @param {Number} intervalCount frequency the charge will be made based on the interval.  Example: interval = month interval count = 3 bills every 3 months.
    */
   createPlan(name, amount, interval, intervalCount) {
     return new Promise((resolve, reject) => {
@@ -260,9 +261,9 @@ class StripeInterface {
   }
 
   /**
-   * 
-   * @param {String} id 
-   * @param {{metadata:Object, name:String, statement_descriptor:String}} options 
+   *
+   * @param {String} id
+   * @param {{metadata:Object, name:String, statement_descriptor:String}} options
    */
   updatePlan(id, options) {
     return new Promise((resolve, reject) => {
