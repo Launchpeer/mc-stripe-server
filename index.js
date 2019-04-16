@@ -93,7 +93,6 @@ findAllCoupons() {
   });
 }
 
-
   updateCustomer(customerId, token) {
     return new Promise((resolve, reject) => {
       this.api.customers.update(customerId, {
