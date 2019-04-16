@@ -84,6 +84,15 @@ class StripeInterface {
   });
 }
 
+findAllCoupons() {
+  return new Promise((resolve, reject) => {
+    this.api.coupons.list({ limit: 10 }, (err, coupons) => {
+      if(err) return reject(err);
+      return resolve(coupons);
+    });
+  });
+}
+
 
   updateCustomer(customerId, token) {
     return new Promise((resolve, reject) => {
